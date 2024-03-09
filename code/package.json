@@ -1,0 +1,26 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@trpc/client": "^10.45.1",
+    "@trpc/server": "^10.45.1",
+    "nuxt": "^3.10.3",
+    "trpc-nuxt": "^0.10.20",
+    "ts-toolbelt": "^9.6.0",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@total-typescript/ts-reset": "^0.5.1"
+  }
+}
