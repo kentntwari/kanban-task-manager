@@ -1,7 +1,4 @@
 {
   "extends": "../.nuxt/tsconfig.server.json",
-  "compilerOptions": {
-    "moduleResolution": "NodeNext"
-  }
 }
 
