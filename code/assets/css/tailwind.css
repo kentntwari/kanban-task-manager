@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base{
+  body{
+    @apply bg-light-grey dark:bg-very-dark-grey text-md text-medium-grey 
+  }
+}
+
+@layer utilities{
+  .btn-large-primary{
+    @apply px-4 bg-main-purple hover:bg-dim-purple h-12 text-white rounded-full
+  }
+  .btn-small-primary{
+    @apply px-4 bg-main-purple hover:bg-dim-purple h-10 text-white rounded-full
+  }
+  .btn-secondary{
+    @apply px-4 bg-main-purple/10 dark:bg-white hover:bg-main-purple/25 dark:hover:bg-white h-10 text-main-purple rounded-full
+  }
+  .btn-destructive{
+    @apply px-4 bg-red hover:bg-dim-red h-10 text-white rounded-full
+  }
+}
