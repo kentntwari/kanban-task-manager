@@ -24,10 +24,12 @@
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^3.3.2",
+    "@nuxtjs/html-validator": "^1.6.0",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/node": "^20.11.25",
     "@vee-validate/nuxt": "^4.12.6",
+    "@vueuse/nuxt": "^10.9.0",
     "prisma": "^5.10.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2",
