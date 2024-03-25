@@ -29,7 +29,6 @@ model Column {
   board   Board?  @relation(fields: [boardId], references: [id])
   boardId String? @map("board_id")
 
-  @@unique([boardId, name])
   @@map("columns")
 }
 
