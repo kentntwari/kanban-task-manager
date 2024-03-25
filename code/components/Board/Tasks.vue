@@ -2,26 +2,34 @@
   setup
   lang="ts"
 >
-import type { Task } from '~/types';
+import type { Task, Board } from '~/types';
 
 const props = defineProps<{
-  boardId: string | null
+  board: string
 }>() 
 
-const { $client } = useNuxtApp()
+// TODO: Find other ways to retrive the data rather than depending on useNuxtData. The first alternative was to directly fetch the data but I wanted to avoid multiple server side calls. Also, we're passing the board name as a prop without the id. Either the server side would have to accomodate the board name as a fetch argument or find way to pass the board id and initiate the fetch
 
-const data = await $client.getBoardTasks.query({ id: props.boardId })
+  const { $client } = useNuxtApp()
 
-const openModal= ref(false)
+  const { data:allBoards } = useNuxtData<Board>('boards')
 
-const currentTask = ref<Task>(null)
+  const boardId:Board[number]['id'] | undefined = allBoards.value?.find((x)=>x.name === props.board)?.id
+
+const {data} = useAsyncData('current-board-tasks', ()=> $client.getBoardTasks.query({ id: boardId as string }))
+
+const currentTask =useState<Task>('current-task', ()=> ref(null))
+
+const {toggleNewColumnUI} = useFormUtils()
+
+const isViewTaskModalOpen= ref(false)
 </script>
 
 
 <template>
   <div
     v-if="data"
-    :class="[data.columns.length === 0 ? 'absolute top-1/2 left-1/2' : '']"
+    :class="[data.columns.length === 0 ? 'w-full h-full flex items-center justify-center' : '']"
   >
     <div
       v-if="data.columns.length > 0"
@@ -36,10 +44,9 @@ const currentTask = ref<Task>(null)
         {{ column.name }} ({{ column.tasks.length}})
       </span>
 
-      <ModalTask
-        v-model:open="openModal"
-        :task="currentTask"
-      />
+      <Modal v-model:open="isViewTaskModalOpen">
+        <Task :task="currentTask" />
+      </Modal>
 
       <article
         v-for="(column, index) in data.columns"
@@ -55,11 +62,11 @@ const currentTask = ref<Task>(null)
           <div
             class="bg-white px-4 py-6 flex flex-col gap-2 rounded-lg shadow-sm"
             @click="event =>{
-              openModal = true
+              isViewTaskModalOpen = true
               currentTask=task
             }"
           >
-            <span class="text-lg text-black">{{ task.title }}</span>
+            <span class="text-lg text-black"> {{ task.title }} </span>
             <span class="text-sm">
               {{ task.subTasks.filter(({isCompleted}) => isCompleted ===
               true).length }} of {{ task.subTasks.length }} subtasks</span>
@@ -69,11 +76,26 @@ const currentTask = ref<Task>(null)
       </article>
 
       <div
-        class="row-start-2 bg-medium-grey/5 w-[280px] h-full flex items-center justify-center rounded-lg"
+        class="row-start-2 bg-medium-grey/5 w-[280px] h-full flex items-center justify-center rounded-lg cursor-pointer"
+        @click="toggleNewColumnUI()"
       >
         <span class="text-xl">+New Column</span>
       </div>
     </div>
 
+    <div
+      v-else
+      class="space-y-6"
+    >
+      <h3 class="text-xl text-center">This board is empty. Create a new column
+        to get started</h3>
+
+      <button
+        type="button"
+        class="m-auto px-4 bg-main-purple h-12 flex items-center text-lg text-white rounded-full"
+        @click="toggleNewColumnUI()"
+      >+ Add
+        New Column</button>
+    </div>
   </div>
 </template>
