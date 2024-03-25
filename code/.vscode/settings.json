@@ -26,5 +26,10 @@
     "editor.defaultFoldingRangeProvider": "esbenp.prettier-vscode",
     "json.format.keepLines": true,
     "files.autoSaveWorkspaceFilesOnly": true,
-    "auto-close-tag.activationOnLanguage": [ "*"]
+    "auto-close-tag.activationOnLanguage": [
+        "*"
+    ],
+    "[vue]": {
+        "editor.defaultFormatter": "Vue.volar"
+    }
 }
