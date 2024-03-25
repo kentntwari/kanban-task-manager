@@ -8,5 +8,8 @@ const { data } = useNuxtData<Board>('boards')
 </script>
 
 <template>
-    <BoardTasks :boardId="!data ? null : data[0].id" />
+    <BoardTasks
+        v-if="data"
+        :board="data[0].name"
+    />
 </template>

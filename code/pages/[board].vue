@@ -2,17 +2,12 @@
     setup
     lang="ts"
 >
-import type { Board } from '~/types';
-
 const route = useRoute()
 
-const { data } = useNuxtData<Board>('boards')
+const currentBoard = route.params.board as string
 </script>
 
 
 <template>
-    <BoardTasks
-        v-if="data"
-        :boardId="data.filter(({name})  => name === route.params.board)[0].id"
-    />
+    <BoardTasks :board="currentBoard" />
 </template>
