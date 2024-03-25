@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
     "@vee-validate/nuxt",
     'radix-vue/nuxt',
+    '@vueuse/nuxt',
+    '@nuxtjs/html-validator'
   ],
   colorMode: {
     classSuffix: ''
