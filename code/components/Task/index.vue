@@ -11,7 +11,7 @@ const props = defineProps<{
 const {$client} = useNuxtApp()
 
 const completedSubTasks = computed(()=>{
-  if(props.task !== null && props.task.subTasks.length > 0){
+  if(props.task && props.task.subTasks.length > 0){
     return props.task.subTasks.filter(subTask => subTask.isCompleted === true).length
   }
 })
