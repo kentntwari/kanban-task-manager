@@ -43,6 +43,7 @@ const { isRevealed:isModalOpen, reveal:openModalFn,cancel:closeModalFn } = useCo
         <span
           v-for="(column, index) in currentBoard.columns"
           class="row-start-1 w-[280px] uppercase text-asm"
+          :key="column.id"
           :class="[`col-start-${index + 1}`]"
         >
           {{ column.name }} ({{ column.tasks.length}})
@@ -52,12 +53,14 @@ const { isRevealed:isModalOpen, reveal:openModalFn,cancel:closeModalFn } = useCo
         <article
           v-for="(column, index) in currentBoard.columns"
           class="row-start-2 w-[280px] space-y-5"
+          :key="column.id"
           :style="{'grid-column-start': index + 1}"
         >
 
 
           <div
             v-for="task in column.tasks"
+            :key="task.id"
             class="flex flex-col gap-4 cursor-pointer"
           >
             <div

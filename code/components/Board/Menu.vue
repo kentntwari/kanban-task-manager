@@ -39,7 +39,10 @@ const { isRevealed:isModalOpen, reveal:openModalFn, cancel:closeModalFn } = useC
       </FormBoard>
     </Modal>
 
-    <li v-for="(board,index) in boards">
+    <li
+      v-for="(board,index) in boards"
+      :key="board.id"
+    >
       <NuxtLink
         class="max-w-60 h-12 px-6 flex items-center gap-3 text-lg rounded-r-full"
         :class="[route.params.board === board.name || (route.path === '/' && index === 0) ? 'bg-main-purple text-white fill-white' : 'fill-medium-grey']"

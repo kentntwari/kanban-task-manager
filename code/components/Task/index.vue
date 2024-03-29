@@ -68,6 +68,7 @@ onUnmounted(async ()=> {
         <div class="flex flex-col gap-2">
           <SubTask
             v-for="subTask in props.task.subTasks"
+            :key="subTask.id"
             :id="subTask.id"
             :isCompleted="subTask.isCompleted"
             @update="(id, value) => {
