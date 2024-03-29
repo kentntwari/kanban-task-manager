@@ -28,6 +28,10 @@ const props = defineProps({
   }
 });
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const name = toRef(props, 'name');
 
 const {
@@ -49,18 +53,22 @@ const {
       class="block mb-2 w-full text-sm"
     >{{ label }}
     </label>
-    <input
-      :name="name"
-      :id="name"
-      :type="type"
-      :value="inputValue"
-      :placeholder="placeholder"
-      :disabled="disabled"
-      class="w-full min-h-10 px-4 flex items-center text-md text-black rounded border placeholder:opacity-25"
-      :class="errorMessage ? 'border-red' : 'border-medium-grey/25'"
-      @input="handleChange"
-      @blur="handleBlur"
-    />
+    <slot>
+      <input
+        v-bind="$attrs"
+        :name="name"
+        :id="name"
+        :type="type"
+        :value="inputValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        class="form-input"
+        :class="errorMessage ? 'border-red' : ''"
+        @input="handleChange"
+        @blur="handleBlur"
+      />
+    </slot>
+
     <small
       v-show="errorMessage"
       class="absolute top-1/2 right-0 mr-4 text-sm text-red"

@@ -20,7 +20,6 @@ const emitsAsProps = useEmitAsProps(emits)
       <DialogOverlay class="bg-black/20 fixed w-auto inset-0 z-30" />
       <DialogContent
         class="fixed top-[50%] left-[50%] h-1/2 max-h-[85vh] overflow-auto w-11/12 max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white p-6 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-[100]"
-        @interact-outside="open = false"
         v-bind="{ ...props, ...emitsAsProps }"
       >
         <slot></slot>

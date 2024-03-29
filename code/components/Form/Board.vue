@@ -11,18 +11,10 @@ const {$client} = useNuxtApp()
 
 const {data:currentBoardTasks} = useNuxtData<BoardTasks>('current-board-tasks')
 
-const {isFormModalOpen, shouldAddNewColumn} = useFormUtils()
-
-const veeSchema = toTypedSchema(z.object({
-  boardName: z.string({required_error: 'name is required'}).min(1),
-  columns: z.array(z.object({
-    id:z.string().default(''),
-    name: z.string({required_error: 'can\'t be empty'}).min(1)
-  })).nullish()
-}))
+const {isEditBoard} = useFormUtils()
 
 const computedInitialValues = computed(()=>{
-  if(shouldAddNewColumn.value) {
+  if(isEditBoard.value) {
     return {
       boardName: currentBoardTasks.value?.name ?? '',
       columns: currentBoardTasks.value?.columns.map((x)=>({id:x.id, name:x.name})),
@@ -36,34 +28,41 @@ const computedInitialValues = computed(()=>{
 })
 
 const emit = defineEmits<{
-  created:[id:string | undefined, name:string],
-  edited: ['']
+  create:[id:string | undefined, name:string],
+  edit: [void],
+  cancel:[void]
 }>()
 
-const { handleSubmit } = useForm({
-  validationSchema: veeSchema,
-  initialValues: computedInitialValues.value
+const { handleSubmit, isSubmitting } = useForm({
+  initialValues: computedInitialValues.value,
+  validationSchema: toTypedSchema(z.object({
+  boardName: z.string({required_error: 'name is required'}).min(1),
+  columns: z.array(z.object({
+    id:z.string().default(''),
+    name: z.string({required_error: 'can\'t be empty'}).min(1)
+  })).nullish()
+})),
 });
 
 
 const onSubmit = handleSubmit(values => {
-if(!shouldAddNewColumn.value){
+if(!isEditBoard.value){
   return $client.addNewBoard.mutate({boardName:values.boardName, columns:(values.columns && values.columns.length > 0) ? values.columns : null}).then((res)=> {
-        return emit('created', res?.id, !res?.name ? values.boardName : res.name)
+        return emit('create', res?.id, !res?.name ? values.boardName : res.name)
 })
 }
 
 else 
-if(shouldAddNewColumn && currentBoardTasks.value && values.columns)
-  return $client.addNewColumn.mutate({boardId: currentBoardTasks.value?.id, columns: values.columns}).then((res)=> emit('edited', ''))
+if(isEditBoard && currentBoardTasks.value && values.columns)
+  return $client.editColumn.mutate({boardId: currentBoardTasks.value?.id, columns: values.columns}).then((res)=> emit('edit'))
 
-  else isFormModalOpen.value = false
+  else emit('cancel')
 });
 </script>
 
 <template>
   <form
-    class="flex flex-col gap-6"
+    class="form"
     @submit="onSubmit"
   >
     <slot name="title"></slot>
@@ -71,7 +70,7 @@ if(shouldAddNewColumn && currentBoardTasks.value && values.columns)
       label="Board Name"
       name="boardName"
       placeholder="e.g: Web design"
-      :disabled="shouldAddNewColumn ? true : false"
+      :disabled="isEditBoard ? true : false"
     />
     <VeeFieldArray
       name="columns"
@@ -107,10 +106,12 @@ if(shouldAddNewColumn && currentBoardTasks.value && values.columns)
 
     <button
       type="submit"
-      class="w-full h-10 bg-main-purple text-md text-white rounded-full"
+      class="form-button"
+      :class="isSubmitting ? 'bg-main-purple/25' : ''"
+      :disabled="isSubmitting"
     >
-      <span v-show="shouldAddNewColumn">Save Changes</span>
-      <span v-show="!shouldAddNewColumn">Create New Board</span>
+      <span v-show="isEditBoard">Save Changes</span>
+      <span v-show="!isEditBoard">Create New Board</span>
     </button>
   </form>
 </template>
