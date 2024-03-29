@@ -2,14 +2,13 @@
     setup
     lang="ts"
 >
-import type { Board } from '~/types';
+const {data} = useBoards()
 
-const { data } = useNuxtData<Board>('boards')
 </script>
 
 <template>
     <BoardTasks
         v-if="data"
-        :board="data[0].name"
+        :boardId="data[0].id"
     />
 </template>

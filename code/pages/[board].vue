@@ -4,10 +4,22 @@
 >
 const route = useRoute()
 
-const currentBoard = route.params.board as string
+const {data:boards} = useBoards()
+
+const currentBoardId = computed(()=>{
+    if(boards.value) {
+       const b = boards.value.find((board)=> board.name === route.params.board as string) 
+
+       if(typeof b !== 'undefined') return b.id
+
+       return ''
+    }
+
+    return ''
+})
 </script>
 
 
 <template>
-    <BoardTasks :board="currentBoard" />
+    <BoardTasks :boardId="currentBoardId" />
 </template>
