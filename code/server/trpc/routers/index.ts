@@ -74,6 +74,10 @@ export const appRouter = router({
 		.mutation(({ input: { id, status, subTasks } }) =>
 			db.updateTask(id, status, subTasks)
 		),
+
+	deleteTask: publicProcedure
+		.input(z.object({ id: z.string() }))
+		.mutation(({ input: { id } }) => db.deleteTask(id)),
 });
 
 // export type definition of API
