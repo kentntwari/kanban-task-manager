@@ -5,24 +5,41 @@
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod';
 
-import type { BoardTasks } from '~/types';
+import type { BoardTasks, Task } from '~/types';
 
 const emit = defineEmits<{
-  create: [void]
+  create: [void],
+  update: [void],
+  cancel:[void]
 }>()
 
 const isComboSelectOpen = ref(false)
 
 const {$client} = useNuxtApp()
 
+const currentTask= useState<Task>('current-task')
+
 const {data:currentBoardTasks} = useNuxtData<BoardTasks>('current-board-tasks')
 
-const selected = ref(currentBoardTasks.value?.columns[0].name ?? '')
+const { isEditTask }= useFormUtils()
+
+const computedInitialValues = computed(()=>{
+  if(isEditTask.value){
+    return {
+      taskTitle: currentTask.value?.title?? '',
+      taskDescription: currentTask.value?.description?? '',
+      taskStatus: currentTask.value?.status?? '',
+      subTasks: currentTask.value?.subTasks.map((x)=>({title:x.title})),
+    }
+  }
+
+  return {
+    taskStatus: currentBoardTasks.value?.columns[0].name ?? '' 
+  }
+})
 
 const {handleSubmit, isSubmitting} = useForm({
-  initialValues:{
-    taskStatus: selected.value
-  },
+  initialValues:computedInitialValues.value,
   validationSchema: toTypedSchema(z.object({
     taskTitle: z.string({
       required_error:'title is required'
@@ -113,7 +130,7 @@ const onSubmit = handleSubmit(values =>{
       >
         <ComboSelect
           placeholder="Select status..."
-          v-model="selected"
+          v-model="computedInitialValues.taskStatus"
           v-model:open="isComboSelectOpen"
           @click="isComboSelectOpen=!isComboSelectOpen"
           @update:modelValue="handleChange"
