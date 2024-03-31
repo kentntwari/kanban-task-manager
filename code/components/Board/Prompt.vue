@@ -4,70 +4,50 @@
 >
 const {refresh} = useBoards()
 
-const prompt = ref(null)
-const open = ref(false)
-
-onClickOutside(prompt, ()=>{
-  if(open.value === true){
-    open.value = false
-  }
-})
-
 const {deleteBoardFn, editBoardFn, isDeleteBoard } = useFormUtils()
 
-const { isRevealed:isModalOpen, reveal:openModalFn,cancel:closeModalFn } = useConfirmDialog()
+const isCollapsed=ref(false)
 </script>
 
 <template>
-  <CollapsibleRoot
-    ref="prompt"
-    class="relative"
-    v-model:open="open"
-  >
+  <PromptCollapsible v-model:collapsed="isCollapsed">
     <Modal
-      v-model:open="isModalOpen"
-      @interact-outside="closeModalFn()"
+      v-model:open="isDeleteBoard"
+      @interact-outside="isDeleteBoard = false"
     >
       <FormDeleteBoard
-        v-show="isDeleteBoard"
-        @cancel="closeModalFn()"
+        @cancel="isDeleteBoard = false"
         @delete="async ()=> {
           refresh()
-          closeModalFn()
+          isDeleteBoard = false
           await navigateTo('/')
           }"
       />
     </Modal>
 
-    <CollapsibleTrigger>
-      <slot></slot>
-    </CollapsibleTrigger>
+    <template #trigger>
+      <SvgIcons icon="dots" />
+    </template>
 
-    <ClientOnly>
-      <CollapsibleContent
-        class="absolute top-10 right-0 p-4 min-w-48 bg-white group:text-md rounded-lg shadow-lg"
-      >
-        <div class="flex flex-col gap-4">
-          <button
-            type="button"
-            @click="event =>{
+    <template #prompts>
+      <div class="flex flex-col gap-4">
+        <button
+          type="button"
+          @click="event =>{
               editBoardFn()
-              open=false
+              isCollapsed = false
           }"
-          >Edit Board</button>
+        >Edit Board</button>
 
-          <button
-            type="button"
-            class="text-red"
-            @click="event =>{
-              openModalFn()
+        <button
+          type="button"
+          class="text-red"
+          @click="event =>{
+              isDeleteBoard = true
               deleteBoardFn()
-              open=false
             }"
-          >Delete Board</button>
-        </div>
-
-      </CollapsibleContent>
-    </ClientOnly>
-  </CollapsibleRoot>
+        >Delete Board</button>
+      </div>
+    </template>
+  </PromptCollapsible>
 </template>
