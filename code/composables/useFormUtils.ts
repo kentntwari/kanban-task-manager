@@ -4,6 +4,7 @@ export default function useFormUtils() {
 	const isDeleteBoard = useState("is-delete-board", () => ref(false));
 	const isAddNewTask = useState("is-add-new-task", () => ref(false));
 	const isEditTask = useState("is-edit-task", () => ref(false));
+	const isDeleteTask = useState("is-delete-task", () => ref(false));
 	const shouldRefetchBoardData = useState("should-refetch-board-data", () =>
 		ref(false)
 	);
@@ -23,6 +24,11 @@ export default function useFormUtils() {
 		isDeleteBoard.value = true;
 	}
 
+	function deleteTaskFn() {
+		resetAllActions();
+		isDeleteTask.value = true;
+	}
+
 	function addNewTaskFn() {
 		resetAllActions();
 		isAddNewTask.value = true;
@@ -35,6 +41,7 @@ export default function useFormUtils() {
 
 	function resetAllActions() {
 		isDeleteBoard.value = false;
+		isDeleteTask.value = false;
 		isAddNewBoard.value = false;
 		isEditBoard.value = false;
 		isAddNewTask.value = false;
@@ -44,6 +51,7 @@ export default function useFormUtils() {
 
 	return {
 		isDeleteBoard: useState<boolean>("is-delete-board"),
+		isDeleteTask: useState<boolean>("is-delete-task"),
 		isAddNewBoard: useState<boolean>("is-add-new-board"),
 		isEditBoard: useState<boolean>("is-add-new-column"),
 		isAddNewTask: useState<boolean>("is-add-new-task"),
@@ -52,6 +60,7 @@ export default function useFormUtils() {
 		addNewBoardFn,
 		editBoardFn,
 		deleteBoardFn,
+		deleteTaskFn,
 		addNewTaskFn,
 		editTaskFn,
 	};
