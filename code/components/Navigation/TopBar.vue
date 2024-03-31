@@ -12,8 +12,6 @@ const route = useRoute()
 
 const {shouldRefetchBoardData, isAddNewTask, addNewTaskFn} = useFormUtils()
 
-const { isRevealed:isModalOpen, reveal:openModalFn, cancel:closeModalFn } = useConfirmDialog()
-
 </script>
 
 <template>
@@ -21,18 +19,15 @@ const { isRevealed:isModalOpen, reveal:openModalFn, cancel:closeModalFn } = useC
     class="fixed top-0 z-30 bg-white w-full h-16 px-4 flex items-center justify-between"
   >
     <Modal
-      v-model:open="isModalOpen"
-      @interact-outside="closeModalFn()"
+      v-model:open="isAddNewTask"
+      @interact-outside="isAddNewTask = false"
     >
       <FormTask @create="()=>{
           shouldRefetchBoardData = true
-          closeModalFn()
+          isAddNewTask = false
     }">
         <template #title>
-          <h2
-            v-show="isAddNewTask"
-            class="form-title"
-          >
+          <h2 class="form-title">
             Add New Task
           </h2>
         </template>
@@ -63,7 +58,7 @@ const { isRevealed:isModalOpen, reveal:openModalFn, cancel:closeModalFn } = useC
         class="btn-small-primary min-w-12 disabled:bg-main-purple/25"
         :disabled="isCanAddTask"
         @click="event =>{
-          openModalFn()
+          isAddNewTask = true
           addNewTaskFn()
           }"
       >
