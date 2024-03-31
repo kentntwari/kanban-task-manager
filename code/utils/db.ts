@@ -380,6 +380,25 @@ export async function updateTask(
 	}
 }
 
+export async function deleteTask(taskId: string) {
+	try {
+		await prisma.task.delete({
+			where: {
+				id: taskId,
+			},
+		});
+
+		await prisma.subTask.deleteMany({
+			where: {
+				taskId,
+			},
+		});
+		await prisma.$disconnect();
+	} catch (error) {
+		logErrors(error);
+	}
+}
+
 function logErrors(error: unknown) {
 	switch (true) {
 		// This error is thrown when the query is invalid
