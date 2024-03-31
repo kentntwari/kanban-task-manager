@@ -8,6 +8,10 @@ const props = defineProps<{
   task:Task
 }>()
 
+const emit = defineEmits<{
+  promptValidate: [void]
+}>()
+
 const {$client} = useNuxtApp()
 
 const completedSubTasks = computed(()=>{
@@ -43,8 +47,8 @@ onUnmounted(async ()=> {
     </template>
 
     <template v-else>
-      <section class="flex items-start justify-between">
-        <div>
+      <section class="w-full flex items-start justify-between">
+        <div class="grow">
           <h2 class="text-xl text-black">
             {{ props.task.title }}
           </h2>
@@ -53,9 +57,7 @@ onUnmounted(async ()=> {
           </p>
         </div>
 
-        <button type="button">
-          <SvgIcons icon="dots" />
-        </button>
+        <TaskPrompt @prompt-validate="emit('promptValidate')" />
       </section>
 
 
