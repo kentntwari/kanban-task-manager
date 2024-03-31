@@ -32,7 +32,7 @@ const onSubmit = handleSubmit(values => {
 <template>
   <form
     @submit="onSubmit"
-    class="e-full flex flex-col gap-6"
+    class="w-full flex flex-col gap-6"
   >
     <h2 class="text-xl text-red">Delete this board?</h2>
     <p class="text-md">Are you sure you want to delete the "{{
