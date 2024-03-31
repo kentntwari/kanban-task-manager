@@ -2,16 +2,15 @@
   setup
   lang="ts"
 >
-import useCurrentBoard from '~/composables/useCurrentBoard';
 import type { Task } from '~/types';
 
 const props = defineProps<{
   boardId: string
 }>() 
 
-const currentTask =useState<Task>('current-task', ()=> ref(null))
+const currentTask = useState<Task>('current-task', ()=> ref(null))
 
-const {editBoardFn, editTaskFn, isEditTask} = useFormUtils()
+const {editBoardFn} = useFormUtils()
 
 const {data:currentBoard} = useCurrentBoard(props.boardId)
 
@@ -29,8 +28,8 @@ const { isRevealed:isModalOpen, reveal:openModalFn,cancel:closeModalFn } = useCo
       @interact-outside="closeModalFn()"
     >
       <Task
-        v-if="isEditTask"
         :task="currentTask"
+        @prompt-validate="closeModalFn()"
       />
     </Modal>
 
@@ -67,7 +66,6 @@ const { isRevealed:isModalOpen, reveal:openModalFn,cancel:closeModalFn } = useCo
               class="bg-white px-4 py-6 flex flex-col gap-2 rounded-lg shadow-sm"
               @click="event =>{
               currentTask=task
-              editTaskFn()
               openModalFn()          
             }"
             >
