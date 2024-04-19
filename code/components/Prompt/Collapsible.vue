@@ -29,7 +29,7 @@ onClickOutside(prompt, ()=>{
 
     <ClientOnly>
       <CollapsibleContent
-        class="absolute top-10 right-0 p-4 min-w-48 bg-white group:text-md rounded-lg shadow-lg"
+        class="absolute top-10 right-0 p-4 min-w-48 bg-white dark:bg-very-dark-grey group:text-md rounded-lg shadow-lg"
       >
         <slot
           name="prompts"

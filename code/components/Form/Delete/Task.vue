@@ -39,14 +39,14 @@ const onSubmit = handleSubmit(values => {
       currentTask?.title ?? '' }}" task and its subtasks? This action cannot be
       reversed</p>
 
-    <div class="w-full group:text-md flex flex-col gap-4">
+    <div class="w-full group:text-md flex flex-col md:flex-row gap-4">
       <button
         type="submit"
-        class="bg-red h-10 text-white rounded-full"
+        class="bg-red w-full h-10 text-white rounded-full"
       >Delete</button>
       <button
         type="button"
-        class="bg-transparent h-10 text-main-purple rounded-full"
+        class="bg-transparent dark:bg-white w-full h-10 text-main-purple rounded-full"
         @click="emit('cancel')"
       >Cancel</button>
     </div>

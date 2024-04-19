@@ -3,34 +3,38 @@
 @tailwind utilities;
 
 @layer base {
-	body {
-		@apply bg-light-grey dark:bg-very-dark-grey text-md text-medium-grey;
-	}
+  body {
+    @apply bg-light-grey dark:bg-very-dark-grey text-md text-medium-grey;
+  }
 }
 
 @layer utilities {
-	.btn-large-primary {
-		@apply px-4 bg-main-purple hover:bg-dim-purple h-12 text-white rounded-full;
-	}
-	.btn-small-primary {
-		@apply px-4 bg-main-purple hover:bg-dim-purple h-10 text-white rounded-full;
-	}
-	.btn-secondary {
-		@apply px-4 bg-main-purple/10 dark:bg-white hover:bg-main-purple/25 dark:hover:bg-white h-10 text-main-purple rounded-full;
-	}
-	.btn-destructive {
-		@apply px-4 bg-red hover:bg-dim-red h-10 text-white rounded-full;
-	}
-	.form {
-		@apply flex flex-col gap-6;
-	}
-	.form-title {
-		@apply text-lg text-black;
-	}
-	.form-input {
-		@apply w-full min-h-10 px-4 text-md text-black rounded border border-medium-grey/25 placeholder:opacity-25;
-	}
-	.form-button {
-		@apply w-full h-10 bg-main-purple text-md text-white rounded-full;
-	}
+  .btn-large-primary {
+    @apply px-4 bg-main-purple hover:bg-dim-purple h-12 text-white rounded-full;
+  }
+  .btn-small-primary {
+    @apply px-4 bg-main-purple hover:bg-dim-purple h-10 text-white rounded-full;
+  }
+  .btn-secondary {
+    @apply px-4 bg-main-purple/10 dark:bg-white hover:bg-main-purple/25 dark:hover:bg-white h-10 text-main-purple rounded-full;
+  }
+  .btn-destructive {
+    @apply px-4 bg-red hover:bg-dim-red h-10 text-white rounded-full;
+  }
+  .form {
+    @apply flex flex-col gap-6;
+  }
+  .form-title {
+    @apply text-lg text-black dark:text-white;
+  }
+  .form-input {
+    @apply bg-white/0 dark:bg-dark-grey/0 w-full min-h-10 px-4 text-md text-black dark:text-white rounded border border-medium-grey/25 placeholder:opacity-25;
+  }
+
+  .form-label {
+    @apply block mb-2 w-full text-sm text-medium-grey dark:text-white;
+  }
+  .form-button {
+    @apply w-full h-10 bg-main-purple text-md text-white rounded-full;
+  }
 }

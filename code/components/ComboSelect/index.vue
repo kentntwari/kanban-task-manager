@@ -24,7 +24,7 @@ const forward = useForwardPropsEmits(props, emits)
       class="w-full inline-flex items-center justify-between rounded px-4 text-md text-black leading-none h-10 border border-medium-grey/25"
     >
       <ComboboxInput
-        class="!bg-transparent outline-none text-grass11 h-full selection:bg-grass5 placeholder-mauve8"
+        class="bg-white/0 outline-none h-full dark:text-white"
         :placeholder="props.placeholder ?? ''"
       />
       <ComboboxTrigger>
@@ -33,7 +33,7 @@ const forward = useForwardPropsEmits(props, emits)
     </ComboboxAnchor>
 
     <ComboboxContent
-      class="absolute z-10 w-full mt-2 min-w-[160px] bg-white overflow-hidden rounded shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
+      class="w-full mt-2 min-w-[160px] bg-white dark:bg-very-dark-grey overflow-hidden rounded shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
     >
       <ComboboxViewport class="p-[5px]">
         <ComboboxEmpty class="text-xs font-medium text-center py-2">

@@ -50,7 +50,7 @@ const {
     <label
       v-show="label"
       :for="name"
-      class="block mb-2 w-full text-sm"
+      class="form-label"
     >{{ label }}
     </label>
     <slot>
