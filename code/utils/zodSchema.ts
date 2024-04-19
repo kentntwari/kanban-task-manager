@@ -16,6 +16,11 @@ export const updateTaskSchema = z.object({
     .optional(),
 });
 
+export const addNewBoardSchema = z.object({
+  boardName: z.string(),
+  columns: z.array(z.object({ name: z.string() })).nullable(),
+});
+
 export const addNewTaskSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
@@ -27,6 +32,21 @@ export const addNewTaskSchema = z.object({
       })
     )
     .optional(),
+});
+
+export const getTaskSchema = z.object({ id: z.string() });
+
+export const getBoardTasksSchema = z.object({ id: z.nullable(z.string()) });
+
+export const getAvailableStatusSchema = z.object({ taskId: z.string() });
+
+export const deleteBoardSchema = z.object({ boardId: z.string() });
+
+export const deleteTaskSchema = z.object({ id: z.string() });
+
+export const editColumnSchema = z.object({
+  boardId: z.string(),
+  columns: z.array(z.object({ id: z.string(), name: z.string() })),
 });
 
 export const formTask = z.object({
