@@ -1,74 +1,76 @@
-<script
-  lang="ts"
-  setup
->
-import { z } from 'zod'
-import { toTypedSchema } from '@vee-validate/zod';
+<script lang="ts" setup>
+  import { toTypedSchema } from "@vee-validate/zod";
+  import type { BoardTasks, Task } from "~/types";
+  import * as s from "~/utils/zodSchema";
 
-import type { BoardTasks, Task } from '~/types';
+  const emit = defineEmits<{
+    create: [void];
+    update: [void];
+    cancel: [void];
+  }>();
 
-const emit = defineEmits<{
-  create: [void],
-  update: [void],
-  cancel:[void]
-}>()
+  const isComboSelectOpen = ref(false);
 
-const isComboSelectOpen = ref(false)
+  const { $client } = useNuxtApp();
 
-const {$client} = useNuxtApp()
+  const currentTask = useState<Task>("current-task");
 
-const currentTask= useState<Task>('current-task')
+  const { data: currentBoardTasks } = useNuxtData<BoardTasks>(
+    "current-board-tasks"
+  );
 
-const {data:currentBoardTasks} = useNuxtData<BoardTasks>('current-board-tasks')
+  const { isAddNewTask, isEditTask } = useFormUtils();
 
-const { isEditTask }= useFormUtils()
-
-const computedInitialValues = computed(()=>{
-  if(isEditTask.value){
-    return {
-      taskTitle: currentTask.value?.title?? '',
-      taskDescription: currentTask.value?.description?? '',
-      taskStatus: currentTask.value?.status?? '',
-      subTasks: currentTask.value?.subTasks.map((x)=>({title:x.title})),
+  const computedInitialValues = computed(() => {
+    if (isEditTask.value) {
+      return {
+        taskTitle: currentTask.value?.title ?? "",
+        taskDescription: currentTask.value?.description ?? "",
+        taskStatus: currentTask.value?.status ?? "",
+        subTasks: currentTask.value?.subTasks.map((x) => ({
+          id: x.id,
+          title: x.title,
+          isCompleted: x.isCompleted,
+        })),
+      };
     }
-  }
 
-  return {
-    taskStatus: currentBoardTasks.value?.columns[0].name ?? '' 
-  }
-})
+    return {
+      taskStatus: currentBoardTasks.value?.columns[0].name ?? "",
+    };
+  });
 
-const {handleSubmit, isSubmitting} = useForm({
-  initialValues:computedInitialValues.value,
-  validationSchema: toTypedSchema(z.object({
-    taskTitle: z.string({
-      required_error:'title is required'
-    }).min(1),
-    taskDescription: z.string().nullish(),
-    taskStatus: z.string(),
-    subTasks: z.array(z.object({
-      title:z.string({
-        required_error: 'can\'t be empty'
-      }).min(1)
-    })).nullish()
-  }))
-})
+  const { handleSubmit, isSubmitting } = useForm({
+    initialValues: computedInitialValues.value,
+    validationSchema: toTypedSchema(s.formTask),
+  });
 
-const onSubmit = handleSubmit(values =>{
-  return $client.addNewTask.mutate({
-    title: values.taskTitle,
-    description: values.taskDescription ? values.taskDescription : null,
-    status: values.taskStatus,
-    subTasks: values.subTasks ? values.subTasks : null
-  }).then(()=>emit('create'))
-})
+  const onSubmit = handleSubmit((values) => {
+    if (isAddNewTask.value)
+      return $client.addNewTask
+        .mutate({
+          title: values.taskTitle,
+          description: values.taskDescription,
+          status: values.taskStatus,
+          subTasks: values.subTasks,
+        })
+        .then(() => emit("create"));
+
+    if (isEditTask.value && currentTask.value)
+      return $client.updateTask
+        .mutate({
+          id: currentTask.value?.id,
+          title: values.taskTitle,
+          description: values.taskDescription,
+          status: values.taskStatus,
+          subTasks: values.subTasks,
+        })
+        .then(() => emit("update"));
+  });
 </script>
 
 <template>
-  <form
-    class="form"
-    @submit="onSubmit"
-  >
+  <form class="form" @submit="onSubmit">
     <slot name="title"></slot>
     <FormBaseInput
       label="Title"
@@ -77,10 +79,7 @@ const onSubmit = handleSubmit(values =>{
       :disabled="isSubmitting"
     />
 
-    <VeeField
-      name="taskDescription"
-      v-slot="{handleChange}"
-    >
+    <VeeField name="taskDescription" v-slot="{ handleChange }">
       <div class="space-y-2">
         <label class="block w-full text-sm">Description</label>
         <textarea
@@ -94,45 +93,36 @@ const onSubmit = handleSubmit(values =>{
 
     <fieldset class="space-y-2">
       <legend class="block w-full text-sm">Subtasks</legend>
-      <VeeFieldArray
-        name="subTasks"
-        v-slot="{fields, push, remove}"
-      >
+      <VeeFieldArray name="subTasks" v-slot="{ fields, push, remove }">
         <div
-          v-for="(field,index) in fields"
+          v-for="(field, index) in fields"
           :key="field.key"
           class="flex items-center gap-4"
         >
           <FormBaseInput :name="`subTasks[${index}].title`" />
-          <button
-            type="button"
-            class="text-lg"
-            @click="remove(index)"
-          >
+          <button type="button" class="text-lg" @click="remove(index)">
             <SvgIcons icon="cross" />
           </button>
         </div>
 
-
         <button
           type="button"
-          class="bg-main-purple/10 w-full min-h-10 flex items-center justify-center font-bold text-md text-main-purple rounded-full"
+          class="bg-main-purple/10 dark:bg-white w-full min-h-10 flex items-center justify-center font-bold text-md text-main-purple rounded-full"
           @click="push({ title: '' })"
-        >+ Add New Subtask</button>
+        >
+          + Add New Subtask
+        </button>
       </VeeFieldArray>
     </fieldset>
 
     <fieldset class="space-y-2">
       <legend class="text-sm">Status</legend>
-      <VeeField
-        name="taskStatus"
-        v-slot="{handleChange}"
-      >
+      <VeeField name="taskStatus" v-slot="{ handleChange }">
         <ComboSelect
           placeholder="Select status..."
           v-model="computedInitialValues.taskStatus"
           v-model:open="isComboSelectOpen"
-          @click="isComboSelectOpen=!isComboSelectOpen"
+          @click="isComboSelectOpen = !isComboSelectOpen"
           @update:modelValue="handleChange"
         >
           <template #empty>No status available</template>
@@ -156,7 +146,8 @@ const onSubmit = handleSubmit(values =>{
       :class="[isSubmitting ? 'bg-main-purple/25' : '']"
       :disabled="isSubmitting"
     >
-      <span>Create Task</span>
+      <span v-show="isAddNewTask">Create Task</span>
+      <span v-show="isEditTask">Save changes</span>
     </button>
   </form>
 </template>
