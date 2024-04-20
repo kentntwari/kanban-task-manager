@@ -24,7 +24,7 @@
     :class="[
       currentBoard.columns.length === 0
         ? 'w-full h-full flex items-center justify-center'
-        : '',
+        : 'h-full',
     ]"
   >
     <Modal v-model:open="isModalOpen" @interact-outside="closeModalFn()">
@@ -34,16 +34,21 @@
     <client-only>
       <div
         v-if="currentBoard.columns.length > 0"
-        class="grid grid-flow-col auto-cols-max gap-4"
+        class="h-full grid grid-flow-col [grid-template-rows:min-content_1fr] auto-cols-max gap-4"
       >
-        <span
+        <div
           v-for="(column, index) in currentBoard.columns"
-          class="row-start-1 w-[280px] uppercase text-asm"
+          class="row-start-1 w-[280px] flex items-center gap-3 uppercase text-asm"
           :key="column.id"
           :class="[`col-start-${index + 1}`]"
         >
+          <span
+            v-show="column.color !== null"
+            class="block w-4 h-4 rounded-full"
+            :style="{ backgroundColor: column.color ?? '' }"
+          ></span>
           {{ column.name }} ({{ column.tasks.length }})
-        </span>
+        </div>
 
         <article
           v-for="(column, index) in currentBoard.columns"
@@ -57,7 +62,7 @@
             class="group flex flex-col gap-4 cursor-pointer"
           >
             <div
-              class="bg-white dark:bg-dark-grey px-4 py-6 flex flex-col gap-2 rounded-lg shadow-sm"
+              class="bg-white dark:bg-dark-grey px-4 py-6 flex flex-col gap-2 rounded-lg shadow-[0_4px_6px_rgba(54,78,126,0.1)]"
               @click="
                 (event) => {
                   currentTask = task;
@@ -91,12 +96,13 @@
       </div>
 
       <div v-else class="space-y-6">
-        <h3 class="text-xl text-center">
+        <h3 class="text-xl text-center text-balance">
           This board is empty. Create a new column to get started
         </h3>
 
         <button
           type="button"
+          title="add new column"
           class="m-auto px-4 bg-main-purple h-12 flex items-center text-lg text-white rounded-full"
           @click="editBoardFn()"
         >

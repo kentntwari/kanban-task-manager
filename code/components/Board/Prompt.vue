@@ -7,13 +7,16 @@
 <template>
   <PromptCollapsible v-model:collapsed="isCollapsed">
     <template #trigger>
-      <SvgIcons icon="dots" />
+      <span class="w-5 h-10 flex items-center justify-end">
+        <SvgIcons icon="dots" />
+      </span>
     </template>
 
     <template #prompts>
       <div class="flex flex-col gap-4">
         <button
           type="button"
+          title="edit board"
           @click="
             (event) => {
               editBoardFn();
@@ -26,6 +29,7 @@
 
         <button
           type="button"
+          title="delete board"
           class="text-red"
           @click="
             (event) => {
