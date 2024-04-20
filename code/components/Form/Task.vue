@@ -19,7 +19,7 @@
 
   const { isAddNewTask, isEditTask } = useFormUtils();
 
-  const status = ref(currentTask.value?.status ?? '');
+  const status = ref(isEditTask.value ? (currentTask.value?.status ?? '') : '');
 
   const computedInitialValues = computed(() => {
     if(isEditTask.value)
