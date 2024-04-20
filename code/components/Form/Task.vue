@@ -22,6 +22,7 @@
   const status = ref(currentTask.value?.status ?? '');
 
   const computedInitialValues = computed(() => {
+    if(isEditTask.value)
       return {
         taskTitle: currentTask.value?.title ?? "",
         taskDescription: currentTask.value?.description ?? "",
