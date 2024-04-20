@@ -44,7 +44,7 @@ export const deleteBoardSchema = z.object({ boardId: z.string() });
 
 export const deleteTaskSchema = z.object({ id: z.string() });
 
-export const editColumnSchema = z.object({
+export const updateBoardSchema = z.object({
   boardId: z.string(),
   columns: z.array(z.object({ id: z.string(), name: z.string() })),
 });

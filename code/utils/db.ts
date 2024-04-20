@@ -1,4 +1,5 @@
 import prisma from "~/utils/prisma";
+import { getRandomColor } from "~/utils/colors";
 import { Prisma } from "@prisma/client";
 
 export async function queryBoardNames() {
@@ -33,6 +34,7 @@ export async function queryBoardTasks(id: string | null) {
           select: {
             id: true,
             name: true,
+            color: true,
             tasks: {
               include: {
                 subTasks: true,
@@ -72,45 +74,42 @@ export async function queryTask(id: string | null) {
   }
 }
 
-export async function queryAvailableStatus(taskId: string | null) {
+export async function queryAvailableStatus(taskId: string) {
   try {
-    if (!taskId) {
-      await prisma.$disconnect();
-      return null;
-    }
-
-    const parentColumn = await prisma.task.findFirst({
+    const task = await prisma.task.findFirst({
       where: {
         id: taskId,
       },
       select: {
-        id: true,
+        columnId: true,
       },
     });
 
-    const parentBoard = await prisma.column.findFirst({
+    if (!task || !task.columnId) {
+      await prisma.$disconnect();
+      return null;
+    }
+
+    const column = await prisma.column.findFirst({
       where: {
-        id: parentColumn?.id,
+        id: task.columnId,
       },
       select: {
-        id: true,
+        boardId: true,
       },
     });
 
-    const allStatuses = await prisma.task.findMany({
-      distinct: ["status"],
+    const columnNames = await prisma.column.findMany({
       where: {
-        column: {
-          boardId: parentBoard?.id,
-        },
+        boardId: column?.boardId,
       },
       select: {
-        status: true,
+        name: true,
       },
     });
 
     await prisma.$disconnect();
-    return allStatuses.filter((x) => x.status !== "");
+    return columnNames;
   } catch (error) {
     logErrors(error);
   }
@@ -133,7 +132,10 @@ export async function addNewBoard(
       data: {
         name: boardName,
         columns: {
-          create: columns.map((column) => ({ name: column.name })),
+          create: columns.map((column) => ({
+            name: column.name,
+            color: getRandomColor(),
+          })),
         },
       },
     });
@@ -171,7 +173,7 @@ export async function deleteBoard(boardId: string) {
   }
 }
 
-export async function editColumn(
+export async function updateBoard(
   boardId: string,
   columns: { id: string; name: string }[]
 ) {
@@ -214,7 +216,7 @@ export async function editColumn(
     }
 
     let retryCount = 0;
-    await Promise.all(
+    await Promise.allSettled(
       columns.map(async (column) => {
         try {
           while (retryCount < 5) {
@@ -223,6 +225,7 @@ export async function editColumn(
               update: {},
               create: {
                 name: column.name,
+                color: getRandomColor(),
                 board: {
                   connect: {
                     id: boardId,
@@ -238,7 +241,8 @@ export async function editColumn(
             error.code === "P2002"
           ) {
             retryCount++;
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // wait for 1 second before retrying
+            // wait for 1 second before retrying
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           } else {
             console.log("error", error);
           }
@@ -341,8 +345,8 @@ export async function addNewTask(
 export async function updateTask(
   id: string,
   title?: string,
-  description?: string,
   status?: string,
+  description?: string,
   subTasks?: {
     id: string | null;
     title: string;
@@ -350,6 +354,7 @@ export async function updateTask(
   }[]
 ) {
   try {
+    //UPDATE THE TITLE IF IT EXISTS
     if (title) {
       await prisma.task.update({
         where: {
@@ -361,17 +366,74 @@ export async function updateTask(
       });
     }
 
+    // UPDATE THE STATUS IF IT EXITS
     if (status) {
-      await prisma.task.update({
+      // FIND WHERE THE CURRENT PARENT COLUMN BEFORE UPDDATE
+      const currentColumnName = await prisma.task.findFirst({
         where: {
           id,
         },
-        data: {
-          status,
+        select: {
+          column: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       });
+
+      // CHANGE COLUMNS IF STATUS IS DEIFFERENT FROM CURRENT COLUMN NAME
+      if (currentColumnName && status !== currentColumnName.column?.name) {
+        await prisma.column.update({
+          where: {
+            id: currentColumnName.column?.id,
+          },
+          data: {
+            tasks: {
+              disconnect: {
+                id,
+              },
+            },
+          },
+        });
+
+        const matchingColumn = await prisma.column.findFirst({
+          where: {
+            name: status,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        await prisma.column.update({
+          where: {
+            id: matchingColumn?.id,
+          },
+          data: {
+            tasks: {
+              connect: {
+                id,
+              },
+            },
+          },
+        });
+      }
+
+      // JUST UPDATE THE STATUS IF SIMILAR
+      if (currentColumnName && status === currentColumnName.column?.name)
+        await prisma.task.update({
+          where: {
+            id,
+          },
+          data: {
+            status,
+          },
+        });
     }
 
+    // UPDATE THE DESCRIPTION IF IT EXISTS
     if (description) {
       await prisma.task.update({
         where: {
@@ -383,10 +445,12 @@ export async function updateTask(
       });
     }
 
+    // DELETE ALL SUBTASKS IF INCOMING SUBTASKS IS EMPTY
     if (subTasks?.length === 0) {
       await prisma.subTask.deleteMany({});
     }
 
+    // UPDATE EXISTING SUBTASKS AND CREATE NEW ONES IF THERE ARE ANY
     if (subTasks && subTasks.length > 0) {
       await prisma.$transaction(async (tx) => {
         // find existing subtasks

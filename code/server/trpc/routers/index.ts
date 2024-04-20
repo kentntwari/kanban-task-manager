@@ -9,7 +9,7 @@ export const appRouter = router({
     .input(s.getBoardTasksSchema)
     .query(({ input: { id } }) => db.queryBoardTasks(id)),
 
-  getAvailableStatus: publicProcedure
+  getAllStatus: publicProcedure
     .input(s.getAvailableStatusSchema)
     .query(({ input: { taskId } }) => db.queryAvailableStatus(taskId)),
 
@@ -23,15 +23,15 @@ export const appRouter = router({
       db.addNewBoard(boardName, columns)
     ),
 
+  updateBoard: publicProcedure
+    .input(s.updateBoardSchema)
+    .mutation(({ input: { boardId, columns } }) =>
+      db.updateBoard(boardId, columns)
+    ),
+
   deleteBoard: publicProcedure
     .input(s.deleteBoardSchema)
     .mutation(({ input: { boardId } }) => db.deleteBoard(boardId)),
-
-  editColumn: publicProcedure
-    .input(s.editColumnSchema)
-    .mutation(({ input: { boardId, columns } }) =>
-      db.editColumn(boardId, columns)
-    ),
 
   addNewTask: publicProcedure
     .input(s.addNewTaskSchema)
