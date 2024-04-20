@@ -9,8 +9,6 @@
     cancel: [void];
   }>();
 
-  const isComboSelectOpen = ref(false);
-
   const { $client } = useNuxtApp();
 
   const currentTask = useState<Task>("current-task");
@@ -21,8 +19,9 @@
 
   const { isAddNewTask, isEditTask } = useFormUtils();
 
+  const status = ref(currentTask.value?.status ?? '');
+
   const computedInitialValues = computed(() => {
-    if (isEditTask.value) {
       return {
         taskTitle: currentTask.value?.title ?? "",
         taskDescription: currentTask.value?.description ?? "",
@@ -33,11 +32,6 @@
           isCompleted: x.isCompleted,
         })),
       };
-    }
-
-    return {
-      taskStatus: currentBoardTasks.value?.columns[0].name ?? "",
-    };
   });
 
   const { handleSubmit, isSubmitting } = useForm({
@@ -70,7 +64,10 @@
 </script>
 
 <template>
-  <form class="form" @submit="onSubmit">
+  <form
+    class="form"
+    @submit="onSubmit"
+  >
     <slot name="title"></slot>
     <FormBaseInput
       label="Title"
@@ -79,7 +76,10 @@
       :disabled="isSubmitting"
     />
 
-    <VeeField name="taskDescription" v-slot="{ handleChange }">
+    <VeeField
+      name="taskDescription"
+      v-slot="{ handleChange }"
+    >
       <div class="space-y-2">
         <label class="block w-full text-sm">Description</label>
         <textarea
@@ -94,7 +94,10 @@
 
     <fieldset class="space-y-2">
       <legend class="block w-full text-sm">Subtasks</legend>
-      <VeeFieldArray name="subTasks" v-slot="{ fields, push, remove }">
+      <VeeFieldArray
+        name="subTasks"
+        v-slot="{ fields, push, remove }"
+      >
         <div
           v-for="(field, index) in fields"
           :key="field.key"
@@ -124,20 +127,21 @@
 
     <fieldset class="space-y-2">
       <legend class="text-sm">Status</legend>
-      <VeeField name="taskStatus" v-slot="{ handleChange }">
+      <VeeField
+        name="taskStatus"
+        v-slot="{ handleChange }"
+      >
         <ComboSelect
           placeholder="Select status..."
-          v-model="computedInitialValues.taskStatus"
-          v-model:open="isComboSelectOpen"
-          @click="isComboSelectOpen = !isComboSelectOpen"
-          @update:modelValue="handleChange"
+          v-model="status"
         >
           <template #empty>No status available</template>
           <template #content>
             <ComboSelectItem
-              v-for="(column, index) in currentBoardTasks?.columns"
+              v-for="(column, index) in currentBoardTasks?.columns.map((column)=>({name:column.name}))"
               :key="index"
               :value="column.name"
+              @click="handleChange(column.name)"
             >
               <span class="font-medium">
                 {{ column.name }}
