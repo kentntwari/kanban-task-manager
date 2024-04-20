@@ -25,6 +25,7 @@ model Board {
 model Column {
   id      String  @id @default(uuid())
   name    String
+  color   String?
   tasks   Task[]
   board   Board?  @relation(fields: [boardId], references: [id])
   boardId String? @map("board_id")
