@@ -178,6 +178,8 @@ export async function updateBoard(
 	columns: { id: string; name: string }[]
 ) {
 	try {
+		console.log(columns);
+
 		if (board.name) {
 			await prisma.board.update({
 				where: {
@@ -233,7 +235,9 @@ export async function updateBoard(
 					while (retryCount < 5) {
 						await prisma.column.upsert({
 							where: { id: column.id },
-							update: {},
+							update: {
+								name: column.name,
+							},
 							create: {
 								name: column.name,
 								color: getRandomColor(),
