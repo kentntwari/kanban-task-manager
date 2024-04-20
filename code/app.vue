@@ -87,14 +87,21 @@
             "
             @update="
               () => {
+                refresh()
                 shouldRefetchBoardData = true;
                 isEditBoard = false;
               }
             "
           >
             <template #title>
-              <h2 v-show="isEditBoard" class="form-title">Edit Board</h2>
-              <h2 v-show="isAddNewBoard" class="form-title">Add New Board</h2>
+              <h2
+                v-show="isEditBoard"
+                class="form-title"
+              >Edit Board</h2>
+              <h2
+                v-show="isAddNewBoard"
+                class="form-title"
+              >Add New Board</h2>
             </template>
           </FormBoard>
 
@@ -127,8 +134,14 @@
             @cancel="isEditTask = false"
           >
             <template #title>
-              <h2 v-show="isEditTask" class="form-title">Edit Task</h2>
-              <h2 v-show="isAddNewTask" class="form-title">Add new Task</h2>
+              <h2
+                v-show="isEditTask"
+                class="form-title"
+              >Edit Task</h2>
+              <h2
+                v-show="isAddNewTask"
+                class="form-title"
+              >Add new Task</h2>
             </template>
           </FormTask>
 

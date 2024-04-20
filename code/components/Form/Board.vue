@@ -68,7 +68,9 @@
     } else if (isEditBoard.value && currentBoardTasks.value && values.columns)
       return $client.updateBoard
         .mutate({
-          boardId: currentBoardTasks.value?.id,
+          board: {
+            id: currentBoardTasks.value?.id, 
+            name: values.boardName},
           columns: values.columns,
         })
         .then((res) => emit("update"));
@@ -77,15 +79,20 @@
 </script>
 
 <template>
-  <form class="form" @submit="onSubmit">
+  <form
+    class="form"
+    @submit="onSubmit"
+  >
     <slot name="title"></slot>
     <FormBaseInput
       label="Board Name"
       name="boardName"
       placeholder="e.g: Web design"
-      :disabled="isEditBoard ? true : false"
     />
-    <VeeFieldArray name="columns" v-slot="{ fields, push, remove }">
+    <VeeFieldArray
+      name="columns"
+      v-slot="{ fields, push, remove }"
+    >
       <fieldset class="space-y-2">
         <legend class="form-label">Board columns</legend>
         <div
@@ -93,7 +100,10 @@
           :key="field.key"
           class="flex items-center gap-4"
         >
-          <FormBaseInput :name="`columns[${index}].name`" type="text" />
+          <FormBaseInput
+            :name="`columns[${index}].name`"
+            type="text"
+          />
           <button
             type="button"
             title="delete column"
