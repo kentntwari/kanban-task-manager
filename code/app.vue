@@ -52,8 +52,8 @@
       <NavigationTopBar />
 
       <main
-        class="mt-20 md:mt-0 flex-1 px-4 py-6 md:overflow-x-auto"
-        :class="isCanAddTask ? 'w-screen' : 'w-max md:w-full'"
+        class="mt-20 md:mt-0 flex-1 px-4 lg:px-6 py-6 md:overflow-x-auto"
+        :class="isCanAddTask ? 'w-auto' : 'w-max md:w-full'"
       >
         <NuxtPage />
 
