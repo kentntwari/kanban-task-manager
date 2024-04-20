@@ -11,6 +11,8 @@
 
   const { $client } = useNuxtApp();
 
+  const { shouldRefetchBoardData } = useFormUtils();
+
   const completedSubTasks = computed(() => {
     if (props.task && props.task.subTasks.length > 0) {
       return props.task.subTasks.filter(
@@ -27,6 +29,11 @@
     isCompleted: boolean;
   }> = [];
 
+  onMounted(() => {
+    if (shouldRefetchBoardData.value === true)
+      shouldRefetchBoardData.value = false;
+  });
+  
   onUnmounted(async () => {
     if (updatedStatus !== props.task?.status || updatedSubTasks.length > 0) {
       await $client.updateTask
@@ -35,7 +42,10 @@
           status: updatedStatus,
           subTasks: updatedSubTasks,
         })
-        .then(() => (updatedSubTasks.length = 0));
+        .then(() => {
+          updatedSubTasks.length = 0;
+          shouldRefetchBoardData.value = true;
+        });
     }
   });
 </script>

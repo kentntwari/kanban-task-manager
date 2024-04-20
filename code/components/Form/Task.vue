@@ -85,6 +85,7 @@
         <textarea
           cols="30"
           rows="5"
+          :value="currentTask?.description ?? ''"
           class="form-input"
           @change="handleChange"
         ></textarea>
@@ -100,13 +101,19 @@
           class="flex items-center gap-4"
         >
           <FormBaseInput :name="`subTasks[${index}].title`" />
-          <button type="button" class="text-lg" @click="remove(index)">
+          <button
+            type="button"
+            title="delete subtask"
+            class="text-lg"
+            @click="remove(index)"
+          >
             <SvgIcons icon="cross" />
           </button>
         </div>
 
         <button
           type="button"
+          title="add new subtask"
           class="bg-main-purple/10 dark:bg-white w-full min-h-10 flex items-center justify-center font-bold text-md text-main-purple rounded-full"
           @click="push({ title: '' })"
         >
@@ -142,6 +149,7 @@
     </fieldset>
     <button
       type="submit"
+      :title="isEditTask ? 'save changes' : 'create task'"
       class="w-full h-10 bg-main-purple text-md text-white rounded-full"
       :class="[isSubmitting ? 'bg-main-purple/25' : '']"
       :disabled="isSubmitting"

@@ -66,7 +66,7 @@
           );
         });
     } else if (isEditBoard.value && currentBoardTasks.value && values.columns)
-      return $client.editColumn
+      return $client.updateBoard
         .mutate({
           boardId: currentBoardTasks.value?.id,
           columns: values.columns,
@@ -94,7 +94,12 @@
           class="flex items-center gap-4"
         >
           <FormBaseInput :name="`columns[${index}].name`" type="text" />
-          <button type="button" class="text-lg" @click="remove(index)">
+          <button
+            type="button"
+            title="delete column"
+            class="text-lg"
+            @click="remove(index)"
+          >
             <SvgIcons icon="cross" />
           </button>
         </div>
@@ -102,6 +107,7 @@
 
       <button
         type="button"
+        title="add new column"
         class="bg-main-purple/10 dark:bg-white w-full min-h-10 flex items-center justify-center font-bold text-md text-main-purple rounded-full"
         @click="push({ name: '' })"
       >
@@ -111,6 +117,7 @@
 
     <button
       type="submit"
+      :title="isEditBoard ? 'Save Changes' : 'Create New Board'"
       class="form-button"
       :class="isSubmitting ? 'bg-main-purple/25' : ''"
       :disabled="isSubmitting"

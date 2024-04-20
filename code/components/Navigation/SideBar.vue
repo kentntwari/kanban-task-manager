@@ -6,18 +6,11 @@
 
   const { data: boards } = useBoards();
 
-  const colorMode = useColorMode();
-
   const emit = defineEmits<{
     toggled: [boolean];
   }>();
 
   const boardMenu = ref(null);
-
-  const toggleColorMode = () => {
-    if (colorMode.value === "light") colorMode.preference = "dark";
-    if (colorMode.value === "dark") colorMode.preference = "light";
-  };
 
   onClickOutside(boardMenu, () => {
     if (isMobileAsideOpen.value === true) {
@@ -28,23 +21,24 @@
 
 <template>
   <aside
-    v-if="width < 768 && isMobileAsideOpen"
-    class="[grid-area:1/1] fixed left-1/2 -translate-x-1/2 z-30 mt-20 bg-white w-3/4 max-w-[264px] h-fit py-4 space-y-5 rounded-lg"
+    v-show="width < 768 && isMobileAsideOpen"
+    class="[grid-area:1/1] fixed left-1/2 -translate-x-1/2 z-30 mt-20 bg-white dark:bg-dark-grey w-3/4 max-w-[264px] h-fit py-4 space-y-5 rounded-lg"
   >
     <span class="block uppercase text-sm tracking-[2.4px] px-6">
       All Boards ({{ boards?.length }})
     </span>
     <BoardMenu ref="boardMenu" />
+    <ThemeSwitcher />
   </aside>
 
   <aside
-    v-else
+    v-show="width > 768"
     class="pb-8 col-start-1 bg-white dark:bg-dark-grey"
     :class="[isSidebarToggled ? 'hidden' : 'flex flex-col justify-between']"
   >
     <div class="w-full space-y-3">
       <section class="px-6 h-14 flex items-center">
-        <button type="button" @click="navigateTo('/')">
+        <button type="button" title="back to home" @click="navigateTo('/')">
           <SvgLogo size="lg" />
         </button>
       </section>
@@ -53,31 +47,12 @@
     </div>
 
     <div class="space-y-4">
-      <div class="px-6">
-        <div
-          class="h-12 w-full bg-light-grey dark:bg-very-dark-grey flex justify-center items-center gap-6 rounded-md"
-        >
-          <SvgIcons icon="sun" />
-
-          <button
-            class="flex items-center w-10 h-5 px-1 bg-main-purple hover:bg-dim-purple rounded-full"
-            :class="[
-              $colorMode.value === 'light' ? 'justify-start' : 'justify-end',
-            ]"
-            @click="toggleColorMode()"
-          >
-            <ColorScheme>
-              <div class="w-[14px] h-[14px] bg-white rounded-full"></div
-            ></ColorScheme>
-          </button>
-
-          <SvgIcons icon="moon" />
-        </div>
-      </div>
+      <ThemeSwitcher />
 
       <button
         type="button"
-        class="group bg-transparent hover:bg-white w-60 h-12 px-6 text-lg truncate rounded-r-full"
+        title="hide sidebar"
+        class="group bg-transparent hover:bg-white w-11/12 h-12 px-6 text-lg truncate rounded-r-full"
         @click="
           (event) => {
             isSidebarToggled = !isSidebarToggled;
@@ -96,6 +71,7 @@
   <button
     v-show="isSidebarToggled"
     type="button"
+    title="show sidebar"
     class="fixed bottom-8 left-0 bg-main-purple hover:bg-dim-purple w-14 h-12 flex items-center justify-center rounded-tr-full rounded-br-full"
     @click="
       (event) => {

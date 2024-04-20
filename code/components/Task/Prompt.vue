@@ -1,14 +1,11 @@
-<script
-  setup
-  lang="ts"
->
-const emit = defineEmits<{
-  promptValidate: [void]
-}>()
+<script setup lang="ts">
+  const emit = defineEmits<{
+    promptValidate: [void];
+  }>();
 
-const {deleteTaskFn, editTaskFn } = useFormUtils()
+  const { deleteTaskFn, editTaskFn } = useFormUtils();
 
-const isCollapsed = ref(false)
+  const isCollapsed = ref(false);
 </script>
 
 <template>
@@ -21,20 +18,30 @@ const isCollapsed = ref(false)
       <div class="flex flex-col gap-4">
         <button
           type="button"
-          @click="event => {
-            emit('promptValidate')
-            editTaskFn()
-          }"
-        >Edit Task</button>
+          title="edit task"
+          @click="
+            (event) => {
+              emit('promptValidate');
+              editTaskFn();
+            }
+          "
+        >
+          Edit Task
+        </button>
 
         <button
           type="button"
+          title="delete task"
           class="text-red"
-          @click="event => {
-            emit('promptValidate')
-            deleteTaskFn()
-          }"
-        >Delete Task</button>
+          @click="
+            (event) => {
+              emit('promptValidate');
+              deleteTaskFn();
+            }
+          "
+        >
+          Delete Task
+        </button>
       </div>
     </template>
   </PromptCollapsible>

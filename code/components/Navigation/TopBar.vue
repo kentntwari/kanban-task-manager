@@ -3,7 +3,7 @@
 
   const { isCanAddTask } = useAddTask();
 
-  const isMobileAsideOpen = useState("is-mobile-aside-open");
+  const isMobileAsideOpen = useState<boolean>("is-mobile-aside-open");
 
   const route = useRoute();
 
@@ -12,7 +12,7 @@
 
 <template>
   <header
-    class="fixed md:static top-0 z-30 bg-white dark:bg-dark-grey w-full h-16 px-4 flex items-center justify-between"
+    class="fixed md:static top-0 z-30 bg-white dark:bg-dark-grey w-full h-16 px-4 lg:px-6 flex items-center justify-between"
   >
     <section class="flex items-center gap-4">
       <NuxtLink to="/" class="md:hidden">
@@ -24,6 +24,7 @@
         </h3>
         <button
           type="button"
+          title="toggle sidebar"
           class="md:hidden before:absolute before:top-0 before:left-0 before:w-full before:h-full"
           @click="isMobileAsideOpen = !isMobileAsideOpen"
         >
@@ -32,10 +33,10 @@
       </div>
     </section>
 
-    <div class="flex items-center gap-4">
+    <div class="flex items-center">
       <button
         type="button"
-        aria-label="add new task"
+        title="add new task"
         class="btn-small-primary min-w-12 disabled:bg-main-purple/25"
         :disabled="isCanAddTask"
         @click="
@@ -47,9 +48,7 @@
       >
         <SvgIcons icon="plus" />
       </button>
-      <BoardPrompt>
-        <SvgIcons icon="dots" />
-      </BoardPrompt>
+      <BoardPrompt />
     </div>
   </header>
 </template>
