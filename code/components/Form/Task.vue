@@ -86,7 +86,7 @@
         <textarea
           cols="30"
           rows="5"
-          :value="currentTask?.description ?? ''"
+          :value="isEditTask ? (currentTask?.description ?? '') : ''"
           class="form-input"
           @change="handleChange"
         ></textarea>
