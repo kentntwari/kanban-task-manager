@@ -1,9 +1,5 @@
 <script setup lang="ts">
-  const router = useRouter();
-
   const { data: boards, refresh } = useBoards();
-
-  const { isCanAddTask } = useAddTask();
 
   const isMobileAsideOpen = useState("is-mobile-aside-open");
 
@@ -47,13 +43,12 @@
     />
 
     <div
-      class="[grid-area:1/1] md:col-start-2 min-h-screen flex flex-col md:overflow-hidden"
+      class="[grid-area:1/1] md:col-start-2 min-h-screen flex flex-col overflow-hidden"
     >
       <NavigationTopBar />
 
       <main
-        class="mt-20 md:mt-0 flex-1 px-4 lg:px-6 py-6 md:overflow-x-auto"
-        :class="isCanAddTask ? 'w-auto' : 'w-max md:w-full'"
+        class="mt-20 md:mt-0 w-full flex-1 px-4 lg:px-6 py-6 overflow-scroll"
       >
         <NuxtPage />
 
@@ -78,11 +73,11 @@
               }
             "
             @create="
-              (id, name) => {
+              async (id, name) => {
                 refresh();
                 isAddNewBoard = false;
                 if (id && isAddNewBoard) boards?.push({ id, name });
-                return router.push(`/${name}`);
+                await navigateTo(`/${name}`);
               }
             "
             @update="
@@ -152,7 +147,6 @@
               async () => {
                 refresh();
                 isDeleteTask = false;
-                await navigateTo('/');
               }
             "
           />
