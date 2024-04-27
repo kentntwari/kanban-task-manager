@@ -5,6 +5,10 @@ import * as s from "~/utils/zodSchema";
 export const appRouter = router({
 	getBoardNames: publicProcedure.query(db.queryBoardNames),
 
+	getBoardId: publicProcedure
+		.input(s.getBoardIdSchema)
+		.query(({ input: { boardName } }) => db.queryBoardId(boardName)),
+
 	getBoardTasks: publicProcedure
 		.input(s.getBoardTasksSchema)
 		.query(({ input: { id } }) => db.queryBoardTasks(id)),
@@ -35,8 +39,8 @@ export const appRouter = router({
 
 	addNewTask: publicProcedure
 		.input(s.addNewTaskSchema)
-		.mutation(({ input: { title, description, status, subTasks } }) =>
-			db.addNewTask(title, status, description, subTasks)
+		.mutation(({ input: { boardId, title, description, status, subTasks } }) =>
+			db.addNewTask(boardId, title, status, description, subTasks)
 		),
 
 	updateTask: publicProcedure
