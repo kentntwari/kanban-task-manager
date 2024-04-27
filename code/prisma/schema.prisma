@@ -27,7 +27,7 @@ model Column {
   name    String
   color   String?
   tasks   Task[]
-  board   Board?  @relation(fields: [boardId], references: [id])
+  board   Board?  @relation(fields: [boardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   boardId String? @map("board_id")
 
   @@map("columns")
@@ -39,7 +39,7 @@ model Task {
   description String?
   status      String
   subTasks    SubTask[]
-  column      Column?   @relation(fields: [columnId], references: [id])
+  column      Column?   @relation(fields: [columnId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   columnId    String?   @map("column_id")
 
   @@map("tasks")
@@ -49,7 +49,7 @@ model SubTask {
   id          String  @id @default(uuid())
   title       String
   isCompleted Boolean @map("is_completed")
-  task        Task?   @relation(fields: [taskId], references: [id])
+  task        Task?   @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   taskId      String? @map("task_id")
 
   @@map("sub_tasks")
