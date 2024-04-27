@@ -1,25 +1,19 @@
-<script
-    setup
-    lang="ts"
->
+<script setup lang="ts">
 const route = useRoute()
 
-const {data:boards} = useBoards()
+const {$client} = useNuxtApp()
 
-const currentBoardId = computed(()=>{
-    if(boards.value) {
-       const b = boards.value.find((board)=> board.name === route.params.board as string) 
-
-       if(typeof b !== 'undefined') return b.id
-
-       return ''
-    }
-
-    return ''
-})
+const {data:currentBoard} = useAsyncData('current-board-id', async ()=>{
+    if(route.params.board && typeof route.params.board === 'string') return await $client.getBoardId.query({boardName: route.params. board})
+} )
 </script>
 
 
 <template>
-    <BoardTasks :boardId="currentBoardId" />
+    <BoardTasks
+        v-if="currentBoard"
+        :boardId="currentBoard.id"
+    />
+
+    <div v-else>Loadig current board id ...</div>
 </template>
