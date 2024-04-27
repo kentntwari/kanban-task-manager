@@ -18,6 +18,24 @@ export async function queryBoardNames() {
 	}
 }
 
+export async function queryBoardId(boardName: string) {
+	try {
+		const boardId = await prisma.board.findFirst({
+			where: {
+				name: boardName,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		await prisma.$disconnect();
+		return boardId;
+	} catch (error) {
+		logErrors(error);
+	}
+}
+
 export async function queryBoardTasks(id: string | null) {
 	try {
 		if (!id) {
@@ -271,6 +289,7 @@ export async function updateBoard(
 }
 
 export async function addNewTask(
+	boardId: string,
 	title: string,
 	status: string,
 	description?: string,
@@ -280,11 +299,19 @@ export async function addNewTask(
 		const matchingColumn = await prisma.column.findFirst({
 			where: {
 				name: status,
+				boardId,
 			},
 			select: {
 				id: true,
+				board: {
+					select: {
+						name: true,
+					},
+				},
 			},
 		});
+
+		console.log(matchingColumn);
 
 		switch (true) {
 			case !description && subTasks !== undefined:

@@ -22,6 +22,7 @@ export const addNewBoardSchema = z.object({
 });
 
 export const addNewTaskSchema = z.object({
+	boardId: z.string(),
 	title: z.string(),
 	description: z.string().optional(),
 	status: z.string(),
@@ -35,6 +36,8 @@ export const addNewTaskSchema = z.object({
 });
 
 export const getTaskSchema = z.object({ id: z.string() });
+
+export const getBoardIdSchema = z.object({ boardName: z.string() });
 
 export const getBoardTasksSchema = z.object({ id: z.nullable(z.string()) });
 
