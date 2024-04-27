@@ -37,7 +37,7 @@ Users should be able to:
 
 ### Screenshot
 
-![](./screenshot.jpg)
+![](https://github.com/kentntwari/kanban-task-manager/blob/main/code/assets/site/Screenshot%202024-04-27%20at%2007-48-30%20https%20__kanban-task-manager-taupe.vercel.app.png)
 
 Add a screenshot of your solution. The easiest way to do this is to use Firefox to view your project, right-click the page and select "Take a Screenshot". You can choose either a full-height screenshot or a cropped one based on how long the page is. If it's very long, it might be best to crop it.
 
