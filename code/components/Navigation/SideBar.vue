@@ -21,7 +21,7 @@
 
 <template>
   <aside
-    v-show="width < 768 && isMobileAsideOpen"
+    v-if="width < 768 && isMobileAsideOpen"
     class="[grid-area:1/1] fixed left-1/2 -translate-x-1/2 z-30 mt-20 bg-white dark:bg-dark-grey w-3/4 max-w-[264px] h-fit py-4 space-y-5 rounded-lg"
   >
     <span class="block uppercase text-sm tracking-[2.4px] px-6">
@@ -32,13 +32,17 @@
   </aside>
 
   <aside
-    v-show="width > 768"
+    v-else
     class="pb-8 col-start-1 bg-white dark:bg-dark-grey"
     :class="[isSidebarToggled ? 'hidden' : 'flex flex-col justify-between']"
   >
     <div class="w-full space-y-3">
       <section class="px-6 h-14 flex items-center">
-        <button type="button" title="back to home" @click="navigateTo('/')">
+        <button
+          type="button"
+          title="back to home"
+          @click="navigateTo('/')"
+        >
           <SvgLogo size="lg" />
         </button>
       </section>
