@@ -1,15 +1,28 @@
 <script setup lang="ts">
-  import type { Task } from "~/types";
+  import type { BoardTasks,Task } from "~/types";
 
   const props = defineProps<{
     boardId: string;
   }>();
 
+  const { $client} = useNuxtApp();
+
   const currentTask = useState<Task>("current-task", () => ref(null));
 
   const { editBoardFn } = useFormUtils();
 
-  const { data: currentBoard } = useCurrentBoard(props.boardId);
+  const { shouldRefetchBoardData } = useFormUtils();
+
+  const {data:currentBoard} = useAsyncData<BoardTasks>(
+    "current-board-tasks",
+    () =>
+      $client.getBoardTasks.query({
+        id: props.boardId,
+      }),
+    {
+      watch: [props, shouldRefetchBoardData],
+    }
+  )
 
   const {
     isRevealed: isModalOpen,
@@ -27,8 +40,14 @@
         : 'h-full',
     ]"
   >
-    <Modal v-model:open="isModalOpen" @interact-outside="closeModalFn()">
-      <Task :task="currentTask" @prompt-validate="closeModalFn()" />
+    <Modal
+      v-model:open="isModalOpen"
+      @interact-outside="closeModalFn()"
+    >
+      <Task
+        :task="currentTask"
+        @prompt-validate="closeModalFn()"
+      />
     </Modal>
 
     <client-only>
@@ -77,12 +96,11 @@
               </span>
               <span class="text-sm">
                 {{
-                  task.subTasks.filter(
-                    ({ isCompleted }) => isCompleted === true
-                  ).length
+                task.subTasks.filter(
+                ({ isCompleted }) => isCompleted === true
+                ).length
                 }}
-                of {{ task.subTasks.length }} subtasks</span
-              >
+                of {{ task.subTasks.length }} subtasks</span>
             </div>
           </div>
         </article>
@@ -95,7 +113,10 @@
         </div>
       </div>
 
-      <div v-else class="space-y-6">
+      <div
+        v-else
+        class="space-y-6"
+      >
         <h3 class="text-xl text-center text-balance">
           This board is empty. Create a new column to get started
         </h3>
@@ -111,4 +132,6 @@
       </div>
     </client-only>
   </div>
+
+  <div v-else>Loading board tasks...</div>
 </template>
