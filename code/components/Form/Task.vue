@@ -19,8 +19,6 @@
 
   const { isAddNewTask, isEditTask } = useFormUtils();
 
-  const status = ref(isEditTask.value ? (currentTask.value?.status ?? '') : '');
-
   const computedInitialValues = computed(() => {
     if(isEditTask.value)
       return {
@@ -33,6 +31,13 @@
           isCompleted: x.isCompleted,
         })),
       };
+      
+      return {
+        taskTitle: "",
+        taskDescription: "",
+        taskStatus: "",
+        subTasks: [],
+      };
   });
 
   const { handleSubmit, isSubmitting } = useForm({
@@ -41,9 +46,10 @@
   });
 
   const onSubmit = handleSubmit((values) => {
-    if (isAddNewTask.value)
+    if (isAddNewTask.value && currentBoardTasks.value)
       return $client.addNewTask
         .mutate({
+          boardId: currentBoardTasks.value.id,
           title: values.taskTitle,
           description: values.taskDescription,
           status: values.taskStatus,
@@ -54,7 +60,7 @@
     if (isEditTask.value && currentTask.value)
       return $client.updateTask
         .mutate({
-          id: currentTask.value?.id,
+          id: currentTask.value.id,
           title: values.taskTitle,
           description: values.taskDescription,
           status: values.taskStatus,
@@ -84,9 +90,9 @@
       <div class="space-y-2">
         <label class="block w-full text-sm">Description</label>
         <textarea
+          v-model="computedInitialValues.taskDescription"
           cols="30"
           rows="5"
-          :value="isEditTask ? (currentTask?.description ?? '') : ''"
           class="form-input"
           @change="handleChange"
         ></textarea>
@@ -134,7 +140,7 @@
       >
         <ComboSelect
           placeholder="Select status..."
-          v-model="status"
+          v-model="computedInitialValues.taskStatus"
         >
           <template #empty>No status available</template>
           <template #content>
