@@ -3,9 +3,7 @@
   const isSidebarToggled = useState("is-sidebar-toggled", () => ref(false));
 
   const { width } = useWindowSize();
-
-  const { data: boards } = useBoards();
-
+  
   const emit = defineEmits<{
     toggled: [boolean];
   }>();
@@ -24,9 +22,6 @@
     v-if="width < 768 && isMobileAsideOpen"
     class="[grid-area:1/1] fixed left-1/2 -translate-x-1/2 z-30 mt-20 bg-white dark:bg-dark-grey w-3/4 max-w-[264px] h-fit py-4 space-y-5 rounded-lg"
   >
-    <span class="block uppercase text-sm tracking-[2.4px] px-6">
-      All Boards ({{ boards?.length }})
-    </span>
     <BoardMenu ref="boardMenu" />
     <ThemeSwitcher />
   </aside>
@@ -34,15 +29,15 @@
   <aside
     v-else
     class="pb-8 col-start-1 bg-white dark:bg-dark-grey"
-    :class="[isSidebarToggled ? 'hidden' : 'flex flex-col justify-between']"
+    :class="[
+      isSidebarToggled
+        ? 'hidden'
+        : 'hidden md:flex md:flex-col md:justify-between',
+    ]"
   >
     <div class="w-full space-y-3">
       <section class="px-6 h-14 flex items-center">
-        <button
-          type="button"
-          title="back to home"
-          @click="navigateTo('/')"
-        >
+        <button type="button" title="back to home" @click="navigateTo('/')">
           <SvgLogo size="lg" />
         </button>
       </section>
@@ -69,6 +64,12 @@
           <span>Hide Sidebar</span>
         </div>
       </button>
+      <NuxtLink
+        to="/api/logout"
+        class="block px-6 py-2 font-bold text-lg"
+        external
+        >Sign out</NuxtLink
+      >
     </div>
   </aside>
 
