@@ -9,6 +9,10 @@
 </script>
 
 <template>
+  <span v-show="boards" class="block uppercase text-sm tracking-[2.4px] px-6">
+    All Boards ({{ boards?.length }})
+  </span>
+
   <ul class="w-full" role="navigation">
     <li v-for="(board, index) in boards" :key="board.id">
       <NuxtLink
