@@ -10,10 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/kinde": "^0.1.10",
     "@prisma/client": "^5.10.2",
     "@trpc/client": "^10.45.1",
     "@trpc/server": "^10.45.1",
     "@vee-validate/zod": "^4.12.6",
+    "imagekitio-vue": "^3.0.1",
     "nuxt": "^3.10.3",
     "radix-vue": "^1.5.2",
     "trpc-nuxt": "^0.10.20",

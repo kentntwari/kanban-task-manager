@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     "radix-vue/nuxt",
     "@vueuse/nuxt",
     "@nuxtjs/html-validator",
+    "@nuxtjs/kinde"
   ],
   colorMode: {
     preference: "system",
