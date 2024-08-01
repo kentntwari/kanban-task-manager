@@ -63,7 +63,7 @@
       </div>
     </div>
     <div
-      class="hidden min-[744px]:block w-full h-full bg-red rounded-[40px] overflow-hidden border border-[#241980]"
+      class="hidden min-[744px]:block w-full h-full bg-white/60 rounded-[40px] overflow-hidden border border-[#241980]"
     >
       <IKImage
         urlEndpoint="https://ik.imagekit.io/2rtor9l9w"
@@ -78,6 +78,7 @@
         :lqip="{ active: true }"
         loading="lazy"
         class="relative top-32 min-[1024px]:top-44 lg:top-32 xl:top-28 left-72 min-[1024px]:left-52 lg:left-40 xl:left-64 scale-[190%] min-[1024px]:scale-[200%] lg:scale-[175%]"
+        alt="dashboard"
       />
     </div>
   </main>
