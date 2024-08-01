@@ -14,6 +14,10 @@
         userId: $auth.user.id,
       });
   });
+
+  useHead({
+    title: `${route.params.board}`,
+  });
 </script>
 
 <template>

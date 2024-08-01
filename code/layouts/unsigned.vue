@@ -1,8 +1,4 @@
-<script lang="ts" setup>
-  onBeforeMount(() => {
-    document.body.style.backgroundColor = "#F4F7FE";
-  });
-</script>
+<script lang="ts" setup></script>
 
 <template>
   <div
