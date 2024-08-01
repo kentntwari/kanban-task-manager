@@ -9,7 +9,7 @@
     cancel: [void];
   }>();
 
-  const { $client } = useNuxtApp();
+  const { $client, $auth } = useNuxtApp();
 
   const { data: currentBoard } = useNuxtData<BoardTasks>("current-board-tasks");
 
@@ -22,9 +22,9 @@
   });
 
   const onSubmit = handleSubmit((values) => {
-    if (currentBoard.value)
+    if (currentBoard.value && $auth.user)
       return $client.deleteBoard
-        .mutate({ boardId: values.boardId })
+        .mutate({ boardId: values.boardId, userId: $auth.user.id })
         .then(() => emit("delete"));
 
     return;

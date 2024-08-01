@@ -9,7 +9,7 @@
     cancel: [void];
   }>();
 
-  const { $client } = useNuxtApp();
+  const { $client, $auth } = useNuxtApp();
 
   const currentTask = useState<Task>("current-task");
 
@@ -20,7 +20,7 @@
   const { isAddNewTask, isEditTask } = useFormUtils();
 
   const computedInitialValues = computed(() => {
-    if(isEditTask.value)
+    if (isEditTask.value)
       return {
         taskTitle: currentTask.value?.title ?? "",
         taskDescription: currentTask.value?.description ?? "",
@@ -31,13 +31,13 @@
           isCompleted: x.isCompleted,
         })),
       };
-      
-      return {
-        taskTitle: "",
-        taskDescription: "",
-        taskStatus: "",
-        subTasks: [],
-      };
+
+    return {
+      taskTitle: "",
+      taskDescription: "",
+      taskStatus: "",
+      subTasks: [],
+    };
   });
 
   const { handleSubmit, isSubmitting } = useForm({
@@ -46,9 +46,10 @@
   });
 
   const onSubmit = handleSubmit((values) => {
-    if (isAddNewTask.value && currentBoardTasks.value)
+    if (isAddNewTask.value && currentBoardTasks.value && $auth.user)
       return $client.addNewTask
         .mutate({
+          userId: $auth.user.id,
           boardId: currentBoardTasks.value.id,
           title: values.taskTitle,
           description: values.taskDescription,
@@ -57,10 +58,11 @@
         })
         .then(() => emit("create"));
 
-    if (isEditTask.value && currentTask.value)
+    if (isEditTask.value && currentTask.value && $auth.user)
       return $client.updateTask
         .mutate({
           id: currentTask.value.id,
+          userId: $auth.user.id,
           title: values.taskTitle,
           description: values.taskDescription,
           status: values.taskStatus,
@@ -71,10 +73,7 @@
 </script>
 
 <template>
-  <form
-    class="form"
-    @submit="onSubmit"
-  >
+  <form class="form" @submit="onSubmit">
     <slot name="title"></slot>
     <FormBaseInput
       label="Title"
@@ -83,10 +82,7 @@
       :disabled="isSubmitting"
     />
 
-    <VeeField
-      name="taskDescription"
-      v-slot="{ handleChange }"
-    >
+    <VeeField name="taskDescription" v-slot="{ handleChange }">
       <div class="space-y-2">
         <label class="block w-full text-sm">Description</label>
         <textarea
@@ -101,10 +97,7 @@
 
     <fieldset class="space-y-2">
       <legend class="block w-full text-sm">Subtasks</legend>
-      <VeeFieldArray
-        name="subTasks"
-        v-slot="{ fields, push, remove }"
-      >
+      <VeeFieldArray name="subTasks" v-slot="{ fields, push, remove }">
         <div
           v-for="(field, index) in fields"
           :key="field.key"
@@ -134,10 +127,7 @@
 
     <fieldset class="space-y-2">
       <legend class="text-sm">Status</legend>
-      <VeeField
-        name="taskStatus"
-        v-slot="{ handleChange }"
-      >
+      <VeeField name="taskStatus" v-slot="{ handleChange }">
         <ComboSelect
           placeholder="Select status..."
           v-model="computedInitialValues.taskStatus"
@@ -145,7 +135,9 @@
           <template #empty>No status available</template>
           <template #content>
             <ComboSelectItem
-              v-for="(column, index) in currentBoardTasks?.columns.map((column)=>({name:column.name}))"
+              v-for="(column, index) in currentBoardTasks?.columns.map(
+                (column) => ({ name: column.name })
+              )"
               :key="index"
               :value="column.name"
               @click="handleChange(column.name)"

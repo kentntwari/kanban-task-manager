@@ -9,7 +9,7 @@
     promptValidate: [void];
   }>();
 
-  const { $client } = useNuxtApp();
+  const { $client, $auth } = useNuxtApp();
 
   const { shouldRefetchBoardData } = useFormUtils();
 
@@ -33,12 +33,17 @@
     if (shouldRefetchBoardData.value === true)
       shouldRefetchBoardData.value = false;
   });
-  
+
   onUnmounted(async () => {
-    if (updatedStatus !== props.task?.status || updatedSubTasks.length > 0) {
+    if (
+      (updatedStatus !== props.task?.status || updatedSubTasks.length > 0) &&
+      props.task &&
+      $auth.user
+    ) {
       await $client.updateTask
         .mutate({
-          id: props.task?.id as string,
+          id: props.task.id,
+          userId: $auth.user.id,
           status: updatedStatus,
           subTasks: updatedSubTasks,
         })
@@ -90,7 +95,7 @@
             :id="subTask.id"
             :isCompleted="subTask.isCompleted"
             @update="
-              (id, value) => {
+              (id: string, value: boolean) => {
                 subTask.isCompleted = value;
                 const filtered = updatedSubTasks.filter((x) => x.id !== id);
 
@@ -109,7 +114,7 @@
             :taskId="props.task.id"
             :currentStatus="props.task.status"
             @update="
-              (status) => {
+              (status: string) => {
                 updatedStatus = status;
               }
             "

@@ -8,10 +8,13 @@
     update: [value: string];
   }>();
 
-  const { $client } = useNuxtApp();
+  const { $client, $auth } = useNuxtApp();
 
   const { data: options } = useAsyncData("allTasksStatuses", () =>
-    $client.getAllStatus.query({ taskId: props.taskId })
+    $client.getAllStatus.query({
+      taskId: props.taskId,
+      userId: $auth.user?.id ?? "",
+    })
   );
 
   const v = ref(props.currentStatus);

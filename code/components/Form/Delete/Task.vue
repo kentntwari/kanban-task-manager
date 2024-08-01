@@ -9,7 +9,7 @@
     cancel: [void];
   }>();
 
-  const { $client } = useNuxtApp();
+  const { $client, $auth } = useNuxtApp();
 
   const currentTask = useState<Task>("current-task");
 
@@ -22,9 +22,9 @@
   });
 
   const onSubmit = handleSubmit((values) => {
-    if (currentTask.value)
+    if (currentTask.value && $auth.user)
       return $client.deleteTask
-        .mutate({ id: values.taskId })
+        .mutate({ id: values.taskId, userId: $auth.user.id })
         .then(() => emit("delete"));
 
     return;
