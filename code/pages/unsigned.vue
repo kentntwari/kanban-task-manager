@@ -8,7 +8,7 @@
   useHead({
     title: "Sign in | Kanban Task Manager",
     bodyAttrs: {
-      class: "bg-[#F4F7FE]",
+      style: "background:#F4F7FE",
     },
   });
 </script>
