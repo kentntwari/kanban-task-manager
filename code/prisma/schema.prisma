@@ -13,10 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String  @id @unique
+  firstName String  @map("first_name")
+  lastName  String  @map("last_name")
+  email     String? @unique
+  picture   String?
+  boards    Board[]
+
+  @@index([id])
+}
+
 model Board {
   id      String   @id @default(uuid())
   name    String
   columns Column[]
+  user    User?    @relation(fields: [userId], references: [id])
+  userId  String?
 
   @@unique([name])
   @@map("boards")
