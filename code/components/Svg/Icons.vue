@@ -127,10 +127,31 @@
       fill="#FFF"
     />
   </svg>
+
+  <!-- ARROW UP RIGHT -->
+
+  <svg
+    v-if="icon === 'arrow-up-right'"
+    width="48"
+    height="48"
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="w-6 min-[744px]:w-16"
+  >
+    <path
+      d="M18.667 45.3333L45.3337 18.6667M45.3337 18.6667H18.667M45.3337 18.6667V45.3333"
+      stroke="#241980"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
 </template>
 
 <script setup lang="ts">
   defineProps<{
     icon: string;
+    size?: string;
   }>();
 </script>
